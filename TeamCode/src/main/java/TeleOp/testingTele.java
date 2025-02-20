@@ -28,7 +28,7 @@ public class testingTele extends LinearOpMode {
     private static final int MAX_SLDES_POSITION = 2000;
 
     public enum buttons {
-        up, down, wait, wait2, complete, specimen, specimenscore, lowchamper, lowchamperscore, waittimeer, specimendrop, dropoffspecimen, seccey, retractfromthespecimen, pickupspecemine, pitup, readyforspecy, scorepose, checkifscored, rectractanddown, hangpart1, retractlinearslideforhang, zeroitout, movearm, lowerbucket, lowwchaoer, cheeclifzero, finishhang, balancehang, qaitimeer2, hangpart10, hanprt0, highasket1
+        up, down, wait, wait2, complete, waittimeer, specimendrop, dropoffspecimen, seccey, retractfromthespecimen, pickupspecemine, pitup, readyforspecy, scorepose, checkifscored, rectractanddown, hangpart1, retractlinearslideforhang, zeroitout, movearm, lowerbucket, lowwchaoer, cheeclifzero, finishhang, balancehang, qaitimeer2, hangpart10, submersible, restofsub, hangpart12, highasket1
     }
     DistanceSensor dis;
     private PIDController controller;
@@ -49,9 +49,9 @@ public class testingTele extends LinearOpMode {
     private Servo hand,turn,wrist, pivotL, pivotR;
 private RevBlinkinLedDriver led;
 buttons state = buttons.complete;
- public static double hover = 0.06;
+ public static double hover = 0.07;
 
- public static double close = 1, hoverwrist = .65,  clawopen =0, wristbasket = .4,wristnotyet = .5, wristspecimen = .5 , hoverspecimen = .575, wristconfirm = .6;
+ public static double close = 1, hoverwrist = .7,  clawopen =0, wristbasket = .4,wristnotyet = .5, wristspecimen = .5 , hoverspecimen = .575, wristconfirm = .6;
  public static double pivotdown = 0;
 Motor fl,fr,bl,br;
 
@@ -136,40 +136,18 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
 
             switch (state) {
                 case complete:
+                    if(gamepad2.right_trigger>.5){
+                        target = 1500 ;
+                        state = buttons.submersible;
 
-                    if(gamepad1.x && 200< slides.left.getCurrentPosition()){
-                        pivotR.setPosition(hover);
-                        pivotL.setPosition(hover);
-                        wrist.setPosition(hoverwrist);
-
-                        hand.setPosition(clawopen);
                     }
-                    else if (gamepad1.x && 200> slides.left.getCurrentPosition()){
+                    if (gamepad1.x){
                         hand.setPosition(clawopen);
 
                     }
-                    if(gamepad1.b) {
-                        turnposition = 0;
-                        pivotR.setPosition(.35);
-                        pivotL.setPosition(.35);
-                        wrist.setPosition(wristnotyet);
-                        hand.setPosition(close);
-                        target = 0;
-                    }
-
                     if(gamepad1.dpad_down){
                         targetArm =-940;
                         state = buttons.readyforspecy;
-                    }
-
-
-
-
-                    if(gamepad1.a){
-                        pivotR.setPosition(0);
-                        pivotL.setPosition(0);
-                        hand.setPosition(close);
-                        wrist.setPosition(wristconfirm);
                     }
                     if (gamepad2.dpad_up) {
 
@@ -190,7 +168,7 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
                         pivotL.setPosition(1);
                         wrist.setPosition(.3);
                         hand.setPosition(close);
-                        state = buttons.hangpart1;
+                        state = buttons.hangpart12;
 
                     }
                     if(gamepad2.right_bumper) {
@@ -204,6 +182,50 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
                     if(gamepad2.left_bumper){
                         state = buttons.pickupspecemine;
 
+                    }
+                    break;
+                case submersible:
+                    if(slides.left.getCurrentPosition()>1400){
+                        pivotR.setPosition(hover);
+                        pivotL.setPosition(hover);
+                        wrist.setPosition(hoverwrist);
+                        hand.setPosition(clawopen);
+                        turnposition=.7;
+                        state = buttons.restofsub;
+                    }
+
+
+
+                    break;
+                case restofsub:
+                    if(gamepad1.a){
+                        pivotR.setPosition(0.01);
+                        pivotL.setPosition(0.01);
+                        hand.setPosition(close);
+                        wrist.setPosition(wristconfirm);
+                    }
+                    if(gamepad1.x ){
+                        pivotR.setPosition(hover);
+                        pivotL.setPosition(hover);
+                        wrist.setPosition(hoverwrist);
+                        hand.setPosition(clawopen);
+                    }
+
+
+                    if(gamepad1.b) {
+                        turnposition = 0;
+                        pivotR.setPosition(.25);
+                        pivotL.setPosition(.25);
+                        wrist.setPosition(wristnotyet);
+                        hand.setPosition(close);
+                        target = 0;
+                        state = buttons.complete;
+                    }
+                    break;
+                case hangpart12:
+                    target = 800;
+                    if(slides.left.getCurrentPosition()>700){
+                        state = buttons.hangpart1;
                     }
                     break;
                 case hangpart1:
@@ -269,8 +291,8 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
 
                     if(gamepad1.b){
                         turnposition=0;
-                        pivotR.setPosition(0.5);
-                        pivotL.setPosition(0.5);
+                        pivotR.setPosition(0.45);
+                        pivotL.setPosition(0.45);
                        wrist.setPosition(wristspecimen);
                         targetArm =-940;
                         state = buttons.readyforspecy;
@@ -427,26 +449,8 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
                     }
                     break;
             }
-            if(pivot.armL.getCurrentPosition()<100 && gamepad2.right_trigger>.5){
-                target = 1500 ;
-                pivotR.setPosition(hover);
-                pivotL.setPosition(hover);
-                wrist.setPosition(hoverwrist);
-                hand.setPosition(clawopen);
-                turnposition=.7;
-            }
 
-            else if (pivot.armL.getCurrentPosition()>100&& gamepad2.left_trigger>.5){
-                target = 2300;
-            }
-            if(gamepad2.left_trigger>.5){
-                turnposition=.7;
-                pivotR.setPosition(.45);
-                pivotL.setPosition(.22);
-                wrist.setPosition(.8);
-                hand.setPosition(close);
-                target = 0;
-            }
+
             if(gamepad2.x){
                 targetArm =0;
                 turnposition=.7;

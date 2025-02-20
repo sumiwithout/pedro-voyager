@@ -18,8 +18,7 @@ public class servotest extends LinearOpMode {
         turn = hardwareMap.get(Servo.class, "turn");
         pivotL = hardwareMap.get(Servo.class, "pivotL");
         pivotR = hardwareMap.get(Servo.class, "pivotR");
-        pivotR.setDirection(Servo.Direction.REVERSE);
-
+pivotR.setDirection(Servo.Direction.REVERSE);
         waitForStart();
         while (!isStopRequested()) {
             if (test == 0) {
