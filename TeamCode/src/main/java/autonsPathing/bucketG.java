@@ -24,7 +24,7 @@ import pedroPathing.constants.LConstants;
 
 @Autonomous(name = "bukest", group = "Examples")
 @Config
-public class bucket extends OpMode {
+public class bucketG extends OpMode {
     //slides
     private PIDController controller;
     public static double p = 0.011, i = 0.003, d = 0.00001;
