@@ -49,14 +49,16 @@ public class realspecy extends OpMode {
 
     private final Pose startPose = new Pose(8, 62.325, Math.toRadians(0));
     //32.5 works sometimes
-    private final Pose scoreSpecyPose = new Pose(40.0, 62.325, Math.toRadians(0));
+    private final Pose scoreSpecyPose = new Pose(37  , 68.325, Math.toRadians(0));
     private final Pose readytopushPose1 = new Pose(60.97, 34.16, Math.toRadians(0));
     private final Pose pushPose1= new Pose(12, 22.77, Math.toRadians(0));
     private final Pose readytopushPose2 = new Pose(62.63, 19.93, Math.toRadians(0));
     private final Pose pushPose2= new Pose(12, 13.00, Math.toRadians(0));
     private final Pose readytopushPose3 = new Pose(62.630, 10.10, Math.toRadians(0));
-    private final Pose pushPose3= new Pose(8, 10.10, Math.toRadians(0));
-    private final Pose pickupspecy= new Pose(8, 32.26, Math.toRadians(0));
+    private final Pose pushPose3= new Pose(13, 11.10, Math.toRadians(0));
+    private final Pose pickupspecy= new Pose(14.5, 35.26, Math.toRadians(0));
+    private final Pose scoreSpecyPose2 = new Pose(36  , 70.325, Math.toRadians(0));
+    private final Pose scoreSpecyPose3 = new Pose(37  , 72.325, Math.toRadians(0));
 
 
     private PathChain scoreSpecy,readytopush1,push1, readytopush2,push2, readytopush3,push3,pushsamplesatonce, scorepath2, pickupspecy2, scorepath3,pickupspecy3, scorepath4, pickupspecy4,scorepath5;
@@ -122,20 +124,20 @@ public class realspecy extends OpMode {
                 scorepath2 = follower.pathBuilder()
                         .addPath(new BezierCurve(new Point(pushPose3),
                                 new Point(22.774, 71.170, Point.CARTESIAN),
-                                new Point(scoreSpecyPose)))
-                .setLinearHeadingInterpolation(pushPose3.getHeading(), scoreSpecyPose.getHeading())
+                                new Point(scoreSpecyPose2)))
+                .setLinearHeadingInterpolation(pushPose3.getHeading(), scoreSpecyPose2.getHeading())
                         .build();
                 pickupspecy2 = follower.pathBuilder()
-                        .addPath(new BezierCurve(new Point(scoreSpecyPose),
+                        .addPath(new BezierCurve(new Point(scoreSpecyPose2),
                                 new Point(22.774, 71.170, Point.CARTESIAN),
                                 new Point(pickupspecy)))
-                        .setLinearHeadingInterpolation(scoreSpecyPose.getHeading(), pickupspecy.getHeading())
+                        .setLinearHeadingInterpolation(scoreSpecyPose2.getHeading(), pickupspecy.getHeading())
                         .build();
                 scorepath3 = follower.pathBuilder()
                         .addPath(new BezierCurve(new Point(pickupspecy),
                                 new Point(22.774, 71.170, Point.CARTESIAN),
-                                new Point(scoreSpecyPose)))
-                        .setLinearHeadingInterpolation(pickupspecy.getHeading(), scoreSpecyPose.getHeading())
+                                new Point(scoreSpecyPose3)))
+                        .setLinearHeadingInterpolation(pickupspecy.getHeading(), scoreSpecyPose3.getHeading())
                         .build();
         pickupspecy3 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(scoreSpecyPose),
@@ -241,21 +243,134 @@ public class realspecy extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Sample */
-                   follower.followPath(push3,true);
-
+                    hand.setPosition(0);
+                    wrist.setPosition(.45);
+                    pivotR.setPosition(.2);
+                    pivotR.setPosition(.2);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    setPathState(6);
+                    setPathState(60);
                 }
+                break;
+            case 60:
+                follower.followPath(push3,true);
+                setPathState(6);
                 break;
             case 6:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
                 if(!follower.isBusy()) {
-                    /* Grab Sample */
                     //follower.followPath(scorepath2,true);
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    setPathState(-1);
+                    timer.reset();
+                    setPathState(65);
                 }
+                break;
+            case  65:
+                hand.setPosition(1);
+                if(timer.seconds()>.9){
+                    pivotR.setPosition(.15);
+                    pivotL.setPosition(.15);
+                    wrist.setPosition(.2);
+                    turn.setPosition(.67);
+                    setPathState(89);
+
+                }
+                break;
+            case 89:
+                targetArm = 1000;
+                target = 700;
+                setPathState(78);
+
+                break;
+            case 78:
+                follower.followPath(scorepath2,true);
+                setPathState(500);
+                break;
+            case 500:
+                if(!follower.isBusy()) {
+                    target = 1300;
+                    setPathState(501);
+                }
+                break;
+            case 501:
+                if(Slides.left.getCurrentPosition()>1250){
+                    hand.setPosition(0);
+                    //work
+                    wrist.setPosition(.5);
+                    pivotR.setPosition(.3);
+                    pivotR.setPosition(.3);
+                    setPathState(502);
+                }
+                break;
+            case 502:
+                target=0;
+                targetArm=0;
+                hand.setPosition(0);
+                wrist.setPosition(.45);
+                pivotR.setPosition(.2);
+                pivotR.setPosition(.2);
+                setPathState(503);
+
+                break;
+            case 503:
+                follower.followPath(pickupspecy2,true);
+                setPathState(504);
+                break;
+            case 504:
+                if(!follower.isBusy()){
+                   timer.reset();
+                    setPathState(505);
+
+                }
+                break;
+            case 505:
+                hand.setPosition(1);
+                if(timer.seconds()>.9){
+                    pivotR.setPosition(.15);
+                    pivotL.setPosition(.15);
+                    wrist.setPosition(.2);
+                    turn.setPosition(.67);
+                    setPathState(506);
+                }
+                break;
+            case 506:
+                targetArm = 1000;
+                target = 600;
+                setPathState(507);
+
+                break;
+            case 507:
+                follower.followPath(scorepath2,true);
+                setPathState(508);
+                break;
+            case 508:
+                if(!follower.isBusy()) {
+                    target = 1300;
+                    setPathState(600);
+                }
+                break;
+            case 600:
+                target = 1300;
+                setPathState(509);
+
+                break;
+            case 509:
+                if(Slides.left.getCurrentPosition()>1250){
+                    hand.setPosition(0);
+                    //work
+                    wrist.setPosition(.5);
+                    pivotR.setPosition(.3);
+                    pivotR.setPosition(.3);
+                    setPathState(510);
+                }
+                break;
+            case 511:
+                target=0;
+                targetArm=0;
+                hand.setPosition(0);
+                wrist.setPosition(.45);
+                pivotR.setPosition(.2);
+                pivotR.setPosition(.2);
+                setPathState(-1);
+
                 break;
             case 7:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
@@ -364,7 +479,7 @@ public class realspecy extends OpMode {
         pivotL.setPosition(.15);
         wrist.setPosition(.2);
         turn.setPosition(.67);
-        targetArm = 1000;
+        targetArm = 11000;
         target = 700;
 
     }

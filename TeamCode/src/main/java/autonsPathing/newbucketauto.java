@@ -55,11 +55,13 @@ public static double turning = .6;
     private final Pose scoresmple2back = new Pose(17 , 127, Math.toRadians(120));
     private final Pose scoresmple2back2 = new Pose(17 , 127, Math.toRadians(120));
     private final Pose scoresmpleback = new Pose(17 , 127, Math.toRadians(120));
+    private final Pose scoresmple2back22 = new Pose(71 , 90, Math.toRadians(120));
 
-    private final Pose pickup1 = new Pose(24.48, 120.5, Math.toRadians(180));
-    private final Pose pickup2 = new Pose(27.48, 126, Math.toRadians(180));
-    private final Pose pickup3 = new Pose(27.48, 129.5, Math.toRadians(200));
+    private final Pose pickup1 = new Pose(24.48, 122, Math.toRadians(180));
+    private final Pose pickup2 = new Pose(27.48, 129, Math.toRadians(180));
+    private final Pose pickup3 = new Pose(28.7, 129.5, Math.toRadians(200));
 
+    private final Pose park = new Pose(28.7, 129.5, Math.toRadians(200));
 
 
     private final Pose pushPose1= new Pose(12, 22.77, Math.toRadians(0));
@@ -74,7 +76,7 @@ public static double turning = .6;
 
     private final Pose pickupspecy= new Pose(12, 32.26, Math.toRadians(0));
 
-    private PathChain scoreSpecy,scoreSpecyback,scoreanothersampleback4, scoresample4,pickupsample3,scoreanothersampleback3,scoresample3,pickupsample2,scoreanothersampleback, grabsample,push1,scoreanothersample, readytopush2,push2, readytopush3,push3,pushsamplesatonce, scorepath2, pickupspecy2, scorepath3,pickupspecy3, scorepath4, pickupspecy4,scorepath5;
+    private PathChain scoreSpecy,parking, scoreanothersampleback5,scoreSpecyback,scoreanothersampleback4, scoresample4,pickupsample3,scoreanothersampleback3,scoresample3,pickupsample2,scoreanothersampleback, grabsample,push1,scoreanothersample, readytopush2,push2, readytopush3,push3,pushsamplesatonce, scorepath2, pickupspecy2, scorepath3,pickupspecy3, scorepath4, pickupspecy4,scorepath5;
 
     public void buildPaths() {
         scoreSpecy = follower.pathBuilder()
@@ -136,7 +138,8 @@ public static double turning = .6;
                 .setPathEndTimeoutConstraint(3)
                 .build();
         scoresample4 =follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickup3),
+                .addPath(new BezierCurve(new Point(pickup3),
+                        new Point(35.110, 122.412, Point.CARTESIAN),
                         new Point(scoresmple2)))
                 .setLinearHeadingInterpolation(pickup3.getHeading(), scoresmple2.getHeading())
                 .setPathEndTimeoutConstraint(3)
@@ -145,6 +148,20 @@ public static double turning = .6;
                 .addPath(new BezierLine(new Point(scoresmple2),
                         new Point(scoresmple2back2)))
                 .setLinearHeadingInterpolation(scoresmple2.getHeading(), scoresmple2back2.getHeading())
+                .setPathEndTimeoutConstraint(1)
+                .build();
+        scoreanothersampleback5= follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scoresmple2),
+                        new Point(scoresmple2back22)))
+                .setLinearHeadingInterpolation(scoresmple2.getHeading(), scoresmple2back22.getHeading())
+                .setPathEndTimeoutConstraint(1)
+
+                .build();
+        parking= follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(scoresmple2back22),
+                        new Point(59.308, 120.514, Point.CARTESIAN),
+                        new Point(park)))
+                .setLinearHeadingInterpolation(scoresmple2back22.getHeading(), park.getHeading())
                 .setPathEndTimeoutConstraint(1)
                 .build();
 
@@ -237,7 +254,7 @@ public static double turning = .6;
             case 100:
                 if(timer.seconds()>.2){
                     pivotR.setPosition(.35);
-                    pivotL.setPosition(.25);
+                    pivotL.setPosition(.35);
                     timer.reset();
                     setPathState(102);
                 }
@@ -264,7 +281,7 @@ public static double turning = .6;
             case  200:
                 target=0;
                 if(Slides.left.getCurrentPosition()<100){
-                    targetArm=-10;
+                    targetArm=-20;
                    follower.followPath(grabsample,true);
                     setPathState(1);
                 }
@@ -347,8 +364,8 @@ setPathState(301);
                 }
                 break;
             case 3423:
-                pivotR.setPosition(.35);
-                pivotL.setPosition(.35);
+                pivotR.setPosition(.2);
+                pivotL.setPosition(.2);
                 timer.reset();
                 setPathState(1234);
 
@@ -392,7 +409,7 @@ timer.reset();
             case  20040:
 
                 if(Slides.left.getCurrentPosition()<100){
-                    targetArm=0;
+                    targetArm=-10;
                     //follower.followPath(grabsample,true);
                     setPathState(3);
                 }
@@ -474,8 +491,8 @@ timer.reset();
                 }
                 break;
             case 508:
-                pivotR.setPosition(.35);
-                pivotL.setPosition(.35);
+                pivotR.setPosition(.2);
+                pivotL.setPosition(.2);
                 wrist.setPosition(.35);
                 timer.reset();
                 setPathState(509);
@@ -514,7 +531,7 @@ timer.reset();
             case  513:
 
                 if(Slides.left.getCurrentPosition()<100){
-                    targetArm=0;
+                    targetArm=-10;
                     //follower.followPath(grabsample,true);
                     setPathState(514);
                 }
@@ -556,8 +573,8 @@ timer.reset();
             case 519:
                 if(timer.seconds()>1){
                     hand.setPosition(1);
-                    pivotR.setPosition(.35);
-                    pivotL.setPosition(.35);
+                    pivotR.setPosition(.2);
+                    pivotL.setPosition(.2);
                     wrist.setPosition(0.4);
                     turn.setPosition(.67);
                     setPathState(520);
@@ -588,15 +605,18 @@ timer.reset();
                 }
                 break;
             case 524:
+                pivotR.setPosition(.2);
+                pivotL.setPosition(.2);
                 hand.setPosition(0);
-                wrist.setPosition(.35);
+                wrist.setPosition(.4);
                 timer.reset();
                 setPathState(525);
 
                 break;
             case 525:
                 if(timer.seconds()>1){
-                    wrist.setPosition(.4);
+                    pivotR.setPosition(.2);
+                    pivotL.setPosition(.2);
 
                     setPathState(526);
 
@@ -604,7 +624,7 @@ timer.reset();
 
                 break;
             case 526:
-                follower.followPath(scoreanothersampleback3,true);
+                follower.followPath(scoreanothersampleback5,true);
                 setPathState(527);
 
                 break;
@@ -633,11 +653,21 @@ timer.reset();
             case  530:
 
                 if(Slides.left.getCurrentPosition()<100){
-                    targetArm=0;
+                    targetArm=-10;
                     //follower.followPath(grabsample,true);
+                    setPathState(531);
+                }
+                break;
+            case 531:
+follower.followPath(parking, true);
+setPathState(532);
+                break;
+            case 532:
+                if(!follower.isBusy()){
                     setPathState(-1);
                 }
                 break;
+
             case 5:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {

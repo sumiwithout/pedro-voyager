@@ -22,9 +22,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
-@Autonomous(name = "kest", group = "Examples")
+@Autonomous(name = "iest", group = "Examples")
 @Config
-public class realspecy2 extends OpMode {
+public class realspecy3 extends OpMode {
     //slides
     private PIDController controller;
     public static double p = 0.011, i = 0.003, d = 0.00001;
@@ -80,8 +80,8 @@ public class realspecy2 extends OpMode {
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         readytopush1 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(scoreSpecyPose),
-                        new Point(0.237, 46.260, Point.CARTESIAN),
-                        new Point(13.997, 29.654, Point.CARTESIAN),
+                        new Point(11.150, 44.600, Point.CARTESIAN),
+                        new Point(25.621, 34.399, Point.CARTESIAN),
                         new Point(readytopushPose1)))
                 .setLinearHeadingInterpolation(scoreSpecyPose.getHeading(), readytopushPose1.getHeading())
                 .setPathEndTimeoutConstraint(1)
