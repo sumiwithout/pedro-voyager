@@ -263,8 +263,6 @@ public class realspecy extends OpMode {
                     /* Score Sample */
                     follower.followPath(pickupspecy2,true);
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-//                    follower.followPath(park,true);
                     setPathState(8);
                 }
                 break;
@@ -273,7 +271,6 @@ public class realspecy extends OpMode {
                 if(!follower.isBusy()) {
                     /* Level 1 Ascent */
                     follower.followPath(scorepath3,true);
-
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                     setPathState(9);
                 }

@@ -127,7 +127,10 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
         gamepad1.setLedColor(128,0,128,120000);
 
         waitForStart();
-
+        hand.setPosition(0);
+        wrist.setPosition(.45);
+        pivotR.setPosition(.2);
+        pivotR.setPosition(.2);
         while (!isStopRequested() && opModeIsActive()) {
 
             pivot.update(targetArm);
@@ -137,7 +140,13 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
             switch (state) {
                 case complete:
                     if(gamepad2.right_trigger>.5){
-                        target = 1500 ;
+                        hand.setPosition(0);
+                        wrist.setPosition(.45);
+                        pivotR.setPosition(.2);
+                        pivotR.setPosition(.2);
+                        turnposition=0;
+
+
                         state = buttons.submersible;
 
                     }
@@ -185,12 +194,13 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
                     }
                     break;
                 case submersible:
+                    target = 1500 ;
                     if(slides.left.getCurrentPosition()>1400){
                         pivotR.setPosition(hover);
                         pivotL.setPosition(hover);
                         wrist.setPosition(hoverwrist);
                         hand.setPosition(clawopen);
-                        turnposition=.7;
+                        turnposition=0;
                         state = buttons.restofsub;
                     }
 
@@ -472,9 +482,13 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
             }
             if(gamepad2.start){
                 slides.left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                slides.left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             if(gamepad1.y){
                 imu.resetYaw();
+            }
+            if(gamepad2.a){
+                target-=10;
             }
             if(gamepad1.left_bumper){
                 turnposition=  turnposition<1? turnposition+.03: 1;

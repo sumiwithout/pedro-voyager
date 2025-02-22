@@ -22,9 +22,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
-@Autonomous(name = "bukest", group = "Examples")
+@Autonomous(name = "wucket", group = "Examples")
 @Config
-public class bucketG extends OpMode {
+public class newbucketauto extends OpMode {
     //slides
     private PIDController controller;
     public static double p = 0.011, i = 0.003, d = 0.00001;
@@ -45,13 +45,23 @@ public class bucketG extends OpMode {
 
     private int pathState;
 
-
-
+public static double head=210;
+public static double turning = .6;
     private final Pose startPose = new Pose(8, 104.38220757825371, Math.toRadians(90));
     //32.5 works sometimes
     //30
-    private final Pose scoresmple = new Pose(15 , 122, Math.toRadians(125));
-    private final Pose pickup1 = new Pose(23.48, 119.28, Math.toRadians(180));
+    private final Pose scoresmple = new Pose(15 , 127, Math.toRadians(120));
+    private final Pose scoresmple2 = new Pose(15 , 127, Math.toRadians(120));
+    private final Pose scoresmple2back = new Pose(17 , 127, Math.toRadians(120));
+    private final Pose scoresmple2back2 = new Pose(17 , 127, Math.toRadians(120));
+    private final Pose scoresmpleback = new Pose(17 , 127, Math.toRadians(120));
+
+    private final Pose pickup1 = new Pose(24.48, 120.5, Math.toRadians(180));
+    private final Pose pickup2 = new Pose(27.48, 126, Math.toRadians(180));
+    private final Pose pickup3 = new Pose(27.48, 129.5, Math.toRadians(200));
+
+
+
     private final Pose pushPose1= new Pose(12, 22.77, Math.toRadians(0));
     private final Pose readytopushPose2 = new Pose(62.63, 19.93, Math.toRadians(0));
     private final Pose pushPose2= new Pose(12, 13.00, Math.toRadians(0));
@@ -64,12 +74,17 @@ public class bucketG extends OpMode {
 
     private final Pose pickupspecy= new Pose(12, 32.26, Math.toRadians(0));
 
-    private PathChain scoreSpecy, grabsample,push1,scoreanothersample, readytopush2,push2, readytopush3,push3,pushsamplesatonce, scorepath2, pickupspecy2, scorepath3,pickupspecy3, scorepath4, pickupspecy4,scorepath5;
+    private PathChain scoreSpecy,scoreSpecyback,scoreanothersampleback4, scoresample4,pickupsample3,scoreanothersampleback3,scoresample3,pickupsample2,scoreanothersampleback, grabsample,push1,scoreanothersample, readytopush2,push2, readytopush3,push3,pushsamplesatonce, scorepath2, pickupspecy2, scorepath3,pickupspecy3, scorepath4, pickupspecy4,scorepath5;
 
     public void buildPaths() {
         scoreSpecy = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(startPose), new Point(scoresmple)))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scoresmple.getHeading())
+                .setPathEndTimeoutConstraint(2)
+                .build();
+        scoreSpecyback  = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scoresmple), new Point(scoresmpleback)))
+                .setLinearHeadingInterpolation(scoresmple.getHeading(), scoresmpleback.getHeading())
                 .setPathEndTimeoutConstraint(2)
                 .build();
 
@@ -78,20 +93,60 @@ public class bucketG extends OpMode {
 
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabsample = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scoresmple),
+                .addPath(new BezierLine(new Point(scoresmpleback),
                         new Point(pickup1)))
-                .setLinearHeadingInterpolation(scoresmple.getHeading(), pickup1.getHeading())
+                .setLinearHeadingInterpolation(scoresmpleback.getHeading(), pickup1.getHeading())
                 .setPathEndTimeoutConstraint(3)
                 .build();
         scoreanothersample = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickup1),
-                        new Point(scoresmple)))
-                .setLinearHeadingInterpolation(pickup1.getHeading(), scoresmple.getHeading())
+                .addPath(new BezierCurve(new Point(pickup1),
+                        new Point(26.570, 129.054, Point.CARTESIAN),
+                        new Point(scoresmple2)))
+                .setLinearHeadingInterpolation(pickup1.getHeading(), scoresmple2.getHeading())
                 .setPathEndTimeoutConstraint(1)
                 .build();
-
-
-
+        scoreanothersampleback = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scoresmple2),
+                        new Point(scoresmple2back)))
+                .setLinearHeadingInterpolation(scoresmple2.getHeading(), scoresmple2back.getHeading())
+                .setPathEndTimeoutConstraint(1)
+                .build();
+        pickupsample2 =follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scoresmple2back),
+                        new Point(pickup2)))
+                .setLinearHeadingInterpolation(scoresmple2back.getHeading(), pickup2.getHeading())
+                .setPathEndTimeoutConstraint(3)
+                .build();
+        scoresample3 =follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickup2),
+                        new Point(scoresmple2)))
+                .setLinearHeadingInterpolation(pickup2.getHeading(), scoresmple2.getHeading())
+                .setPathEndTimeoutConstraint(3)
+                .build();
+        scoreanothersampleback3= follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scoresmple2),
+                        new Point(scoresmple2back2)))
+                .setLinearHeadingInterpolation(scoresmple2.getHeading(), scoresmple2back2.getHeading())
+                .setPathEndTimeoutConstraint(1)
+                .build();
+        pickupsample3 =follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scoresmple2back2),
+                        new Point(pickup3)))
+                .setLinearHeadingInterpolation(scoresmple2back2.getHeading(), pickup3.getHeading())
+                .setPathEndTimeoutConstraint(3)
+                .build();
+        scoresample4 =follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickup3),
+                        new Point(scoresmple2)))
+                .setLinearHeadingInterpolation(pickup3.getHeading(), scoresmple2.getHeading())
+                .setPathEndTimeoutConstraint(3)
+                .build();
+        scoreanothersampleback4= follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scoresmple2),
+                        new Point(scoresmple2back2)))
+                .setLinearHeadingInterpolation(scoresmple2.getHeading(), scoresmple2back2.getHeading())
+                .setPathEndTimeoutConstraint(1)
+                .build();
 
                 push1 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(pickup1),
@@ -180,27 +235,37 @@ public class bucketG extends OpMode {
                 }
                 break;
             case 100:
-                if(timer.seconds()>.5){
-                hand.setPosition(0);
-                timer.reset();
+                if(timer.seconds()>.2){
+                    pivotR.setPosition(.35);
+                    pivotL.setPosition(.25);
+                    timer.reset();
                     setPathState(102);
-
                 }
 
                 break;
             case 102:
+                hand.setPosition(0);
+                wrist.setPosition(.5);
                 if(timer.seconds()>.5){
-                    hand.setPosition(0);
-                  wrist.setPosition(.5);
-                    target=0;
-                    setPathState(200);
+                    pivotR.setPosition(.2);
+                    pivotL.setPosition(.2);
+                    setPathState(250);
                 }
                 break;
-            case  200:
+            case 250:
+                follower.followPath(scoreSpecyback, true);
+                setPathState(260);
 
+                break;
+            case 260:
+                if(!follower.isBusy()){
+                    setPathState(200);
+                }
+            case  200:
+                target=0;
                 if(Slides.left.getCurrentPosition()<100){
-                    targetArm=0;
-                    follower.followPath(grabsample,true);
+                    targetArm=-10;
+                   follower.followPath(grabsample,true);
                     setPathState(1);
                 }
                 break;
@@ -218,11 +283,16 @@ public class bucketG extends OpMode {
                 if(!follower.isBusy()) {
                     /* Score Preload */
                     //follower.followPath(push1,true);
-target = 2100;
+
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                     setPathState(300);
+                     setPathState(306);
 
                 }
+                break;
+            case 306:
+                target= 2100;
+                setPathState(300);
+
                 break;
 
             case 300:
@@ -239,50 +309,333 @@ setPathState(301);
                 if(timer.seconds()>.4){
                     hand.setPosition(1);
                     timer.reset();
-                    setPathState(-1);
+                    setPathState(302);
                 }
                 break;
             case 302:
-                if(timer.seconds()>.2){
+                if(timer.seconds()>1){
                     hand.setPosition(1);
-                    pivotR.setPosition(.3);
-                    pivotL.setPosition(.3);
-                    wrist.setPosition(.4);
+                    pivotR.setPosition(.2);
+                    pivotL.setPosition(.2);
+                    wrist.setPosition(0.4);
                     turn.setPosition(.67);
-                    target=400;
+                    setPathState(2345);
+                }
+                break;
+            case 2345:
+                target=400;
+                if(Slides.left.getCurrentPosition()<500){
+                    targetArm =1200;
                     setPathState(2);
+
                 }
                 break;
             case 2:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
 
                     /* Grab Sample */
-                    targetArm =1000;
-
+                    target=2200;
                     follower.followPath(scoreanothersample,true);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     setPathState(303);
 
                 break;
-            case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+            case 303:
                 if(!follower.isBusy()) {
+                    setPathState(3423);
+                }
+                break;
+            case 3423:
+                pivotR.setPosition(.35);
+                pivotL.setPosition(.35);
+                timer.reset();
+                setPathState(1234);
+
+                break;
+            case 1234:
+                if(timer.seconds()>.2){
+                    hand.setPosition(0);
+                    wrist.setPosition(.4);
+timer.reset();
+                    setPathState(22222);
+                }
+                break;
+            case 22222:
+                if (timer.seconds()>.3){
+                    pivotR.setPosition(.2);
+                    pivotL.setPosition(.2);
+                    setPathState(3420);
+
+                }
+                break;
+            case 3420:
+                follower.followPath(scoreanothersampleback,true);
+                setPathState(3421);
+
+                break;
+
+            case 3421:
+                if(!follower.isBusy()){
+                    setPathState(109);
+
+                }
+                break;
+            case 109:
+                if(timer.seconds()>.5){
+                    hand.setPosition(0);
+                    wrist.setPosition(.5);
+                    target=0;
+                    setPathState(20040);
+                }
+                break;
+            case  20040:
+
+                if(Slides.left.getCurrentPosition()<100){
+                    targetArm=0;
+                    //follower.followPath(grabsample,true);
+                    setPathState(3);
+                }
+                break;
+            case 3:
+
                     /* Score Sample */
-                    follower.followPath(push2,true);
+                    follower.followPath(pickupsample2,true);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     setPathState(4);
-                }
+
                 break;
             case 4:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if(!follower.isBusy()) {
                     /* Grab Sample */
-                    follower.followPath(readytopush3,true);
+                    //follower.followPath(readytopush3,true);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    setPathState(5);
+                    setPathState(500);
+                }
+                break;
+            case 500:
+                target= 1900;
+                setPathState(501);
+
+                break;
+
+            case 501:
+                if(Slides.left.getCurrentPosition()>1800){
+                    pivotR.setPosition(0.01);
+                    pivotL.setPosition(0.01);
+                    wrist.setPosition(.6);
+                    timer.reset();
+
+                    setPathState(502);
+                }
+                break;
+            case 502:
+                if(timer.seconds()>.4){
+                    hand.setPosition(1);
+                    timer.reset();
+                    setPathState(503);
+                }
+                break;
+            case 503:
+                if(timer.seconds()>1){
+                    hand.setPosition(1);
+                    pivotR.setPosition(.2);
+                    pivotL.setPosition(.2);
+                    wrist.setPosition(0.4);
+                    turn.setPosition(.67);
+                    setPathState(504);
+                }
+                break;
+            case 504:
+                target=400;
+                if(Slides.left.getCurrentPosition()<500){
+                    targetArm =1200;
+                    setPathState(505);
+
+                }
+                break;
+            case 505:
+                target=2200;
+                if(Slides.left.getCurrentPosition()>2100){
+                    setPathState(506);
+                }
+                break;
+            case 506:
+                follower.followPath(scoresample3,true);
+                setPathState(507);
+
+                break;
+            case 507:
+                if(!follower.isBusy()){
+                    setPathState(508);
+                }
+                break;
+            case 508:
+                pivotR.setPosition(.35);
+                pivotL.setPosition(.35);
+                wrist.setPosition(.35);
+                timer.reset();
+                setPathState(509);
+
+                break;
+            case 509:
+                if(timer.seconds()>1){
+                    hand.setPosition(0);
+                    wrist.setPosition(.4);
+
+                    setPathState(510);
+
+                }
+
+                break;
+            case 510:
+                follower.followPath(scoreanothersampleback3,true);
+                setPathState(511);
+
+                break;
+
+            case 511:
+                if(!follower.isBusy()){
+                    setPathState(512);
+
+                }
+                break;
+            case 512:
+                if(timer.seconds()>.5){
+                    hand.setPosition(0);
+                    wrist.setPosition(.5);
+                    target=0;
+                    setPathState(513);
+                }
+                break;
+            case  513:
+
+                if(Slides.left.getCurrentPosition()<100){
+                    targetArm=0;
+                    //follower.followPath(grabsample,true);
+                    setPathState(514);
+                }
+                break;
+            case 514:
+                follower.followPath(pickupsample3,true);
+                setPathState(515);
+                break;
+            case 515:
+                if(!follower.isBusy()){
+                    setPathState(516);
+                }
+                break;
+
+            case 516:
+                target= 2000;
+                setPathState(517);
+
+                break;
+
+            case 517:
+                if(Slides.left.getCurrentPosition()>1800){
+                    pivotR.setPosition(0.01);
+                    pivotL.setPosition(0.01);
+                    wrist.setPosition(.6);
+                    turn.setPosition(.6);
+                    timer.reset();
+
+                    setPathState(518);
+                }
+                break;
+            case 518:
+                if(timer.seconds()>.4){
+                    hand.setPosition(1);
+                    timer.reset();
+                    setPathState(519);
+                }
+                break;
+            case 519:
+                if(timer.seconds()>1){
+                    hand.setPosition(1);
+                    pivotR.setPosition(.35);
+                    pivotL.setPosition(.35);
+                    wrist.setPosition(0.4);
+                    turn.setPosition(.67);
+                    setPathState(520);
+                }
+                break;
+            case 520:
+                target=400;
+                if(Slides.left.getCurrentPosition()<500){
+                    targetArm =1200;
+                    setPathState(521);
+
+                }
+                break;
+            case 521:
+                target=2200;
+                if(Slides.left.getCurrentPosition()>2100){
+                    setPathState(522);
+                }
+                break;
+            case 522:
+                follower.followPath(scoresample4,true);
+                setPathState(523);
+
+                break;
+            case 523:
+                if(!follower.isBusy()){
+                    setPathState(524);
+                }
+                break;
+            case 524:
+                hand.setPosition(0);
+                wrist.setPosition(.35);
+                timer.reset();
+                setPathState(525);
+
+                break;
+            case 525:
+                if(timer.seconds()>1){
+                    wrist.setPosition(.4);
+
+                    setPathState(526);
+
+                }
+
+                break;
+            case 526:
+                follower.followPath(scoreanothersampleback3,true);
+                setPathState(527);
+
+                break;
+
+            case 527:
+                if(!follower.isBusy()){
+                    setPathState(528);
+
+                }
+                break;
+            case 528:
+                if(timer.seconds()>.5){
+                    hand.setPosition(0);
+                    wrist.setPosition(.5);
+                    target=0;
+                    setPathState(529);
+                } break;
+            case 529:
+                if(timer.seconds()>.5){
+                    hand.setPosition(0);
+                    wrist.setPosition(.5);
+                    target=0;
+                    setPathState(530);
+                }
+                break;
+            case  530:
+
+                if(Slides.left.getCurrentPosition()<100){
+                    targetArm=0;
+                    //follower.followPath(grabsample,true);
+                    setPathState(-1);
                 }
                 break;
             case 5:
@@ -320,7 +673,7 @@ setPathState(301);
                 break;
 
             case 7:
-                targetArm=1000;
+                targetArm=1200;
                 target=300;
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
@@ -446,11 +799,11 @@ setPathState(301);
         opmodeTimer.resetTimer();
         setPathState(0);
         hand.setPosition(1);
-        pivotR.setPosition(.35);
-        pivotL.setPosition(.35);
-        wrist.setPosition(.5);
+        pivotR.setPosition(.2);
+        pivotL.setPosition(.2);
+        wrist.setPosition(0.4);
         turn.setPosition(.67);
-        targetArm = 1000;
+        targetArm = 1200;
         target = 2200;
 
     }

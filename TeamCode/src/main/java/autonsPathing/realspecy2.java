@@ -56,7 +56,7 @@ public class realspecy2 extends OpMode {
     private final Pose readytopushPose2 = new Pose(62.63, 19.93, Math.toRadians(0));
     private final Pose pushPose2= new Pose(12, 13.00, Math.toRadians(0));
     private final Pose readytopushPose3 = new Pose(62.630, 10.10, Math.toRadians(0));
-    private final Pose pushPose3= new Pose(13.5, 10.10, Math.toRadians(0));
+    private final Pose pushPose3= new Pose(13, 11.10, Math.toRadians(0));
     private final Pose scoreSpecyPose2 = new Pose(35, 66, Math.toRadians(0));
     private final Pose scoreSpecyPose3 = new Pose(37.5, 64, Math.toRadians(0));
     private final Pose scoreSpecyPose4 = new Pose(37.5, 62, Math.toRadians(0));
@@ -102,7 +102,7 @@ public class realspecy2 extends OpMode {
                        new Point(55.987, 31.315, Point.CARTESIAN),
                         new Point(readytopushPose2)))
                 .setLinearHeadingInterpolation(pushPose1.getHeading(), readytopushPose2.getHeading())
-                        .setPathEndTimeoutConstraint(2)
+                        .setPathEndTimeoutConstraint(4)
                 .build();
                 push2 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(readytopushPose2),
@@ -110,7 +110,7 @@ public class realspecy2 extends OpMode {
                         new Point(14.000, 13.000, Point.CARTESIAN),
                         new Point(pushPose2)))
                         .setLinearHeadingInterpolation(readytopushPose2.getHeading(), pushPose2.getHeading())
-                        .setPathEndTimeoutConstraint(2)
+                        .setPathEndTimeoutConstraint(4)
                 .build();
         readytopush3 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(pushPose2),
@@ -123,6 +123,7 @@ public class realspecy2 extends OpMode {
                 .addPath(new BezierLine(new Point(readytopushPose3),
                         new Point(pushPose3)))
                 .setLinearHeadingInterpolation(readytopushPose3.getHeading(), pushPose3.getHeading())
+                        .setZeroPowerAccelerationMultiplier(2)
                 .setPathEndTimeoutConstraint(20)
                 .build();
                 scorepath2 = follower.pathBuilder()
@@ -171,23 +172,15 @@ public class realspecy2 extends OpMode {
                 break;
             case 99:
                 if(!follower.isBusy()) {
-                    setPathState(-1);
-                    timer.reset();
-                }
-                break;
-            case 100:
-                if(timer.seconds()>.4){
-                target = 1400;
-                    setPathState(102);
-
-                }
-
-                break;
-            case 102:
-                if(Slides.left.getCurrentPosition()>1300){
                     hand.setPosition(0);
-                    //work
-                    wrist.setPosition(.5);
+                    timer.reset();
+                    setPathState(1222);
+                }
+                break;
+            case 1222:
+                target=0;
+                if(Slides.left.getCurrentPosition()<200) {
+                    wrist.setPosition(.45);
                     pivotR.setPosition(.2);
                     pivotR.setPosition(.2);
                     setPathState(98);
@@ -197,7 +190,6 @@ public class realspecy2 extends OpMode {
                     target=0;
                     follower.followPath(readytopush1,true);
                     setPathState(1);
-                     targetArm=0;
 
 
                 break;
@@ -210,7 +202,7 @@ public class realspecy2 extends OpMode {
                 */
 
 
-
+targetArm=-10;
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Preload */
@@ -275,10 +267,11 @@ public class realspecy2 extends OpMode {
 
             case 10001:
                 if(timer.seconds()>.7) {
-                    pivotR.setPosition(.15);
-                    pivotL.setPosition(.15);
-                    wrist.setPosition(.2);
-                    turn.setPosition(.67);
+                    hand.setPosition(1);
+                    pivotR.setPosition(.58);
+                    pivotL.setPosition(.58);
+                    wrist.setPosition(.7);
+                    turn.setPosition(0);
                     follower.followPath(scorepath2, true);
                     setPathState(7);
 
@@ -286,33 +279,13 @@ public class realspecy2 extends OpMode {
                 break;
 
             case 7:
-                targetArm=1000;
-                target=300;
+                targetArm = 1000;
+                target = 1000 ;
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-//                    follower.followPath(park,true);
-                    setPathState(10003);
+                    setPathState(9);
                     timer.reset();
 
-                }
-                break;
-            case 10003:
-                if(timer.seconds()>.4){
-                    target=1300;
-                    setPathState(10002);
-
-                }
-                break;
-            case 10002:
-                if(Slides.left.getCurrentPosition()>1300){
-                    hand.setPosition(0);
-                    //work
-                    wrist.setPosition(.5);
-                    pivotR.setPosition(.25);
-                    pivotR.setPosition(.25);
-                    setPathState(8);
                 }
                 break;
             case 8:
@@ -412,12 +385,12 @@ public class realspecy2 extends OpMode {
         opmodeTimer.resetTimer();
         setPathState(0);
         hand.setPosition(1);
-        pivotR.setPosition(.55);
-        pivotL.setPosition(.55);
-        wrist.setPosition(.75);
+        pivotR.setPosition(.58);
+        pivotL.setPosition(.58);
+        wrist.setPosition(.7);
         turn.setPosition(.67);
         targetArm = 1000;
-        target = 900;
+        target = 1000;
 
     }
 
