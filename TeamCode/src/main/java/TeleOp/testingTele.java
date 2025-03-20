@@ -28,7 +28,7 @@ public class testingTele extends LinearOpMode {
     private static final int MAX_SLDES_POSITION = 2000;
 
     public enum buttons {
-        up, down, wait, wait2, complete, waittimeer, specimendrop, dropoffspecimen, seccey, retractfromthespecimen, pickupspecemine, pitup, readyforspecy, scorepose, checkifscored, rectractanddown, hangpart1, retractlinearslideforhang, zeroitout, movearm, lowerbucket, lowwchaoer, cheeclifzero, finishhang, balancehang, qaitimeer2, hangpart10, submersible, restofsub, hangpart12, highasket1
+        up, down, wait, wait2, complete, waittimeer, specimendrop, dropoffspecimen, seccey, retractfromthespecimen, pickupspecemine, pitup, readyforspecy, scorepose, checkifscored, rectractanddown, hangpart1, retractlinearslideforhang, zeroitout, movearm, lowerbucket, lowwchaoer, cheeclifzero, finishhang, balancehang, qaitimeer2, hangpart10, submersible, restofsub, hangpart12, resetarm, highasket1
     }
     DistanceSensor dis;
     private PIDController controller;
@@ -139,6 +139,14 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
 
             switch (state) {
                 case complete:
+                    if(gamepad1.right_trigger>.5){
+                        target-=100;
+                    }
+                    if(gamepad1.start){
+                        targetArm=1000;
+                        waitTimer5.reset();
+                        state = buttons.resetarm;
+                    }
                     if(gamepad2.right_trigger>.5){
                         hand.setPosition(0);
                         wrist.setPosition(.45);
@@ -181,16 +189,23 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
 
                     }
                     if(gamepad2.right_bumper) {
-                        turnposition=.7;
+
                         pivotR.setPosition(0.25);
                         pivotL.setPosition(0.25);
-                        wrist.setPosition(.7);
+                        wrist.setPosition(.5);
                         turnposition = .7;
                         state = buttons.specimendrop;
                     }
                     if(gamepad2.left_bumper){
                         state = buttons.pickupspecemine;
 
+                    }
+                    break;
+                case resetarm:
+                    if(waitTimer5.seconds()>.2){
+                        pivot.armL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        pivot.armL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        state = buttons.complete;
                     }
                     break;
                 case submersible:
@@ -488,8 +503,9 @@ br =  new Motor(hardwareMap, "br", Motor.GoBILDA.RPM_435);
                 imu.resetYaw();
             }
             if(gamepad2.a){
-                target-=10;
+                targetArm-=10;
             }
+
             if(gamepad1.left_bumper){
                 turnposition=  turnposition<1? turnposition+.03: 1;
             }

@@ -56,9 +56,12 @@ public class realspecy extends OpMode {
     private final Pose pushPose2= new Pose(12, 13.00, Math.toRadians(0));
     private final Pose readytopushPose3 = new Pose(62.630, 10.10, Math.toRadians(0));
     private final Pose pushPose3= new Pose(13, 11.10, Math.toRadians(0));
-    private final Pose pickupspecy= new Pose(14.5, 35.26, Math.toRadians(0));
+    private final Pose pickupspecy= new Pose(13, 35.26, Math.toRadians(0));
+    private final Pose pickupspecy42= new Pose(12, 35.26, Math.toRadians(0));
+
     private final Pose scoreSpecyPose2 = new Pose(36  , 70.325, Math.toRadians(0));
-    private final Pose scoreSpecyPose3 = new Pose(37  , 72.325, Math.toRadians(0));
+    private final Pose scoreSpecyPose3 = new Pose(38  , 73.325, Math.toRadians(0));
+    private final Pose scoreSpecyPose4 = new Pose(37  , 75.325, Math.toRadians(0));
 
 
     private PathChain scoreSpecy,readytopush1,push1, readytopush2,push2, readytopush3,push3,pushsamplesatonce, scorepath2, pickupspecy2, scorepath3,pickupspecy3, scorepath4, pickupspecy4,scorepath5;
@@ -140,16 +143,22 @@ public class realspecy extends OpMode {
                         .setLinearHeadingInterpolation(pickupspecy.getHeading(), scoreSpecyPose3.getHeading())
                         .build();
         pickupspecy3 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scoreSpecyPose),
+                .addPath(new BezierCurve(new Point(scoreSpecyPose3),
                         new Point(22.774, 71.170, Point.CARTESIAN),
                         new Point(pickupspecy)))
-                .setLinearHeadingInterpolation(scoreSpecyPose.getHeading(), pickupspecy.getHeading())
+                .setLinearHeadingInterpolation(scoreSpecyPose3.getHeading(), pickupspecy.getHeading())
+                .build();
+        pickupspecy4 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(scoreSpecyPose4),
+                        new Point(22.774, 71.170, Point.CARTESIAN),
+                        new Point(pickupspecy42)))
+                .setLinearHeadingInterpolation(scoreSpecyPose4.getHeading(), pickupspecy42.getHeading())
                 .build();
         scorepath4= follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(pickupspecy),
                         new Point(22.774, 71.170, Point.CARTESIAN),
-                        new Point(scoreSpecyPose)))
-                .setLinearHeadingInterpolation(pickupspecy.getHeading(), scoreSpecyPose.getHeading())
+                        new Point(scoreSpecyPose4)))
+                .setLinearHeadingInterpolation(pickupspecy.getHeading(), scoreSpecyPose4.getHeading())
                 .build();
 
 
@@ -338,18 +347,20 @@ public class realspecy extends OpMode {
 
                 break;
             case 507:
-                follower.followPath(scorepath2,true);
+                follower.followPath(scorepath3,true);
                 setPathState(508);
                 break;
             case 508:
                 if(!follower.isBusy()) {
-                    target = 1300;
+                    timer.reset();
                     setPathState(600);
                 }
                 break;
             case 600:
-                target = 1300;
-                setPathState(509);
+                if(timer.seconds()>.5) {
+                    target = 1300;
+                    setPathState(509);
+                }
 
                 break;
             case 509:
@@ -359,7 +370,7 @@ public class realspecy extends OpMode {
                     wrist.setPosition(.5);
                     pivotR.setPosition(.3);
                     pivotR.setPosition(.3);
-                    setPathState(510);
+                    setPathState(511);
                 }
                 break;
             case 511:
@@ -369,46 +380,100 @@ public class realspecy extends OpMode {
                 wrist.setPosition(.45);
                 pivotR.setPosition(.2);
                 pivotR.setPosition(.2);
+                setPathState(512);
+
+                break;
+            case 512:
+                follower.followPath(pickupspecy3,true);
+                setPathState(514);
+                break;
+            case 514:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
+                if(!follower.isBusy()) {
+                    //follower.followPath(scorepath2,true);
+                    timer.reset();
+                    setPathState(515);
+                }
+                break;
+            case  515:
+                hand.setPosition(1);
+                if(timer.seconds()>.9){
+                    pivotR.setPosition(.15);
+                    pivotL.setPosition(.15);
+                    wrist.setPosition(.2);
+                    turn.setPosition(.67);
+                    setPathState(516);
+
+                }
+                break;
+            case 516:
+                targetArm = 1000;
+                target = 600;
+                setPathState(518);
+
+                break;
+            case 518:
+                follower.followPath(scorepath4,true);
+                setPathState(519);
+                break;
+            case 519:
+                if(!follower.isBusy()) {
+                    target = 1300;
+                    setPathState(520);
+                }
+                break;
+            case 520:
+                if(Slides.left.getCurrentPosition()>1250){
+                    hand.setPosition(0);
+                    //work
+                    wrist.setPosition(.5);
+                    pivotR.setPosition(.3);
+                    pivotR.setPosition(.3);
+                    setPathState(521);
+                }
+                break;
+            case 521:
+                target=0;
+                targetArm=0;
+                hand.setPosition(0);
+                wrist.setPosition(.45);
+                pivotR.setPosition(.2);
+                pivotR.setPosition(.2);
+                setPathState(522);
+
+                break;
+            case 522:
+                follower.followPath(pickupspecy4,true);
                 setPathState(-1);
-
                 break;
-            case 7:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+            case 523:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
                 if(!follower.isBusy()) {
-                    /* Score Sample */
-                    follower.followPath(pickupspecy2,true);
-
-                    setPathState(8);
+                    //follower.followPath(scorepath2,true);
+                    timer.reset();
+                    setPathState(524);
                 }
                 break;
-            case 8:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(!follower.isBusy()) {
-                    /* Level 1 Ascent */
-                    follower.followPath(scorepath3,true);
-                    /* Set the state to a Case we won't use or define, so it just stops running an new paths */
-                    setPathState(9);
-                }
-                break;
-            case 9:
-                if(!follower.isBusy()) {
-                    follower.followPath(pickupspecy3,true);
-                    setPathState(10);
+            case  524:
+                hand.setPosition(1);
+                if(timer.seconds()>.9){
+                    pivotR.setPosition(.15);
+                    pivotL.setPosition(.15);
+                    wrist.setPosition(.2);
+                    turn.setPosition(.67);
+                    setPathState(525);
 
                 }
                 break;
-            case 10:
-                if(!follower.isBusy()) {
-                    follower.followPath(scorepath4,true);
-                    setPathState(11);
+            case 525:
+                targetArm = 1000;
+                target = 600;
+                setPathState(526);
 
-                }
                 break;
-            case 11:
-
-                if(!follower.isBusy()) {
-                    setPathState(-1);
-                }
+            case 527:
+                follower.followPath(scorepath4,true);
+                setPathState(528);
                 break;
         }
     }

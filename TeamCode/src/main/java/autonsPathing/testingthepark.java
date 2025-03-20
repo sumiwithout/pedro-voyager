@@ -22,9 +22,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
-@Autonomous(name = "wucket", group = "Examples")
+@Autonomous(name = "park", group = "Examples")
 @Config
-public class newbucketauto extends OpMode {
+public class testingthepark extends OpMode {
     //slides
     private PIDController controller;
     public static double p = 0.011, i = 0.003, d = 0.00001;
@@ -51,7 +51,7 @@ public static double turning = .6;
     //32.5 works sometimes
     //30
     private final Pose scoresmple = new Pose(15 , 127, Math.toRadians(120));
-    private final Pose scoresmple2 = new Pose(15 , 127, Math.toRadians(120));
+    private final Pose scoresmple2 = new Pose(15 , 127.5, Math.toRadians(120));
     private final Pose scoresmple2back = new Pose(17 , 127, Math.toRadians(120));
     private final Pose scoresmple2back2 = new Pose(17 , 127, Math.toRadians(120));
     private final Pose scoresmpleback = new Pose(17 , 127, Math.toRadians(120));
@@ -365,9 +365,9 @@ setPathState(301);
 
                 break;
             case 1234:
+                hand.setPosition(0);
+                wrist.setPosition(.4);
                 if(timer.seconds()>.2){
-                    hand.setPosition(0);
-                    wrist.setPosition(.4);
 timer.reset();
                     setPathState(22222);
                 }
@@ -640,8 +640,8 @@ timer.reset();
 
                 if(Slides.left.getCurrentPosition()<100){
                     targetArm=-10;
-                    //follower.followPath(grabsample,true);
-                    setPathState(531);
+                    follower.followPath(grabsample,true);
+                    setPathState(532);
                 }
                 break;
             case 531:
